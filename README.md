@@ -2,7 +2,7 @@
 
 Community reverse-engineering notes and **read-only extraction tools** for the PC release of *Tales of Eternia Remastered*.
 
-> **Project status: experimental.** ZARC v2 extraction works against one tested PC game archive; the inner `TOER` format, resource naming, and repacking are still under investigation. This project is unofficial and is not affiliated with or endorsed by the game's publisher or developers.
+> **Project status: experimental.** ZARC v2 extraction works against one tested PC game archive; the master `TOER` catalog parser is validated; nested resource decoding, linking catalog names to payloads, and repacking remain unsolved. This project is unofficial and is not affiliated with or endorsed by the game's publisher or developers.
 
 ## What works today
 
@@ -142,34 +142,27 @@ Extraction reveals a mix of recognizable and proprietary resources. An initial `
 
 The two ELF modules expose the names **`sceMpeg_library`** and **`sceATRAC3plus_Library`** in their `.rodata.sceModuleInfo` sections. Their presence **does not by itself establish** that the PC version executes PSP code or uses a full PSP emulator.
 
-### The inner `TOER` format (work in progress)
+### Master `TOER` catalog (parsed and verified)
 
-One extracted resource, `1009_FB41681A91008172.bin`, begins with the four-byte signature **`TOER`** and was **5,411,080 bytes** in the tested archive. Printable strings inside it include paths such as:
+`1009_FB41681A91008172.bin` has a **50,237-record** catalog of identifiers, filenames, resource types and validated custom 64-bit filename hashes. `export_toer_catalog.py` exported all 50,237 rows (zero validation errors). The catalog is **not** an extractor for the individual texture/model payload bytes. See `TOER_FORMAT.md` and `TOER_RESEARCH_CHECKPOINT.md` for details.
 
-```text
-TOE/Char/Main/Rid_01.tim
-TOE/Char/Main/Far_01.tim
-TOE/Char/Main/Keel_01.tim
-TOE/Char/Main/Mer_01.tim
-TOE/Char/Main/Quickie.tim
-TOE/btl/bin/bt_m001.bin
-TOE/btlmap/magic/ef001.tim
-TOE_upscale/
-```
+### Numbered containers (inner codec unsolved)
 
-A string scan found **44,211 distinct strings beginning with `TOE/` or `TOE_upscale/`**. This is a count of recognizable *strings*, not yet a validated count of separate assets available in the game.
+890 extracted resources passed common numbered-container framing checks. **10,379** `0x03` nested records were validated with 9-byte length wrappers and four-byte zero padding; their encoding algorithm and linkage to `.tim`/`.pmd` catalog names remain unknown. See `NUMBERED_CONTAINERS.md`.
 
-The `TOER` header contains numerous plausible little-endian 64-bit pointers or offsets. A scan found **4,481 consecutive increasing candidate offsets** starting at file offset `0x18`, before the sequence decreased at `0x8C20`. This is **not yet a proven table size or section count**. An observed header value `0xC43D` (50,237) has not been interpreted reliably.
+### Native investigation
 
-**Current priority:** determine the `TOER` record and string-reference layout to map internal asset names to resources.
+Ghidra analysis of `GameNative.dll` confirmed the **outer ZARC LZMA-Alone** path, not the nested resource decoder. See `ZARC_FORMAT.md` for function addresses and evidence. Managed `Assembly-CSharp.dll` uses Unity Addressables and exposes `UgxAssetManager.LoadAsset<T>(uint)`; whether it processes the numbered containers is unverified.
 
 ## Roadmap
 
 - [x] Decode and validate the tested ZARC v2 header and index.
 - [x] Extract all 1,183 ZARC entries with no reported extraction failures.
 - [x] Identify LZMA-Alone compression and raw block handling.
-- [ ] Publish a detailed, independently verified ZARC format specification.
-- [ ] Document the `TOER` header, tables, and string references.
+- [x] Record the observed ZARC v2 layout for the tested archive (not other builds).
+- [x] Decode and export the 50,237-record master `TOER` catalog and validate filename hashes.
+- [x] Document validated framing for 10,379 nested `0x03` records.
+- [ ] Identify inner `0x03` codec and extract at least one verified payload.
 - [ ] Recover and match original filenames to extracted content.
 - [ ] Identify internal texture, model, text, and script formats.
 - [ ] Add automated tests using synthetic fixtures (not copyrighted assets).

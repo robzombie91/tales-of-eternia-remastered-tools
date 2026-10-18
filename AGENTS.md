@@ -6,7 +6,7 @@ This repository contains **unofficial, read-only reverse-engineering tools and f
 
 1. Keep game installations and source archives untouched.
 2. Maintain reliable ZARC v2 extraction and regression tests.
-3. Research TOER structures and the relationship between internal asset paths and data records.
+3. Maintain the verified TOER catalog exporter and research mapping of catalog paths to nested content.
 4. Improve documentation with reproducible evidence and clear confidence levels.
 5. Do not introduce repacking or modification features without explicit scope and rigorous tests.
 
@@ -14,7 +14,8 @@ This repository contains **unofficial, read-only reverse-engineering tools and f
 
 - **Validated on one PC `DATA.zarc`:** `ZARC` v2; 40-byte big-endian header; 24-byte index records; 2-byte big-endian block lengths; 64 KiB logical blocks; 128-byte resource alignment; LZMA-Alone and raw block handling; 1,183 of 1,183 files extracted successfully across two runs.
 - **Confirmed in one extracted resource:** file `1009_FB41681A91008172.bin` begins with `TOER`, is 5,411,080 bytes, and contains numerous `TOE/` and `TOE_upscale/` path strings.
-- **Not confirmed:** TOER record structures, interpretation of all TOER header fields, resource name-to-hash mappings, whether the PC game executes extracted PSP PRX code, or ZARC compatibility across other builds.
+- **Verified since initial checkpoint:** master TOER catalog has 50,237 validated 40-byte records, two sorted pointer indexes and matching custom filename hashes; 10,379 nested `0x03` wrapper records have verified lengths and padding. See `TOER_FORMAT.md` and `NUMBERED_CONTAINERS.md`.
+- **Not confirmed:** codec of nested payloads, mapping catalog records to nested data, interpretation of every TOER header field, whether the PC game executes extracted PSP PRX code, or ZARC compatibility across other builds.
 - A pattern or `file`-utility guess is **not** a proven format identification.
 
 ## Working conventions
@@ -40,9 +41,9 @@ Relevant Ghidra functions observed during the original investigation (addresses 
 - `FUN_18026f2b0`: decode 40-byte ZARC header.
 - `FUN_18026f440`: decode 24-byte ZARC records.
 - `FUN_18026ea00`: archive key lookup.
-- `FUN_18026f570` / `FUN_18026f640`: custom CRC-based name hashing; mapping of actual path names to ZARC keys remains unresolved.
+- `FUN_18026f570` / `FUN_18026f640`: custom CRC-based name hashing; the hash algorithm is validated on all 50,237 TOER catalog filenames; mapping to payload members is still unresolved.
 
-Consult `docs/ZARC_FORMAT.md` for byte layouts and `docs/TOER_FORMAT.md` for the current TOER research boundary.
+Consult `ZARC_FORMAT.md`, `TOER_FORMAT.md`, `NUMBERED_CONTAINERS.md`, and `TOER_RESEARCH_CHECKPOINT.md` (or their equivalent docs/ paths if the repository is reorganized).
 
 ## Legal and distribution boundaries
 
@@ -51,3 +52,7 @@ Do **not** commit or propose redistribution of original game archives, extracted
 ## Response style for collaborating agents
 
 Explain complicated reverse-engineering steps in plain English. Prefer one focused next experiment with a measurable expected result. Correct prior misunderstandings directly; distinguish confidence from enthusiasm.
+
+### Later Ghidra finding
+
+`FUN_1802740f0 → FUN_180274810 → FUN_180276840 → FUN_180274CC0` is the **outer ZARC LZMA-Alone** path (worker names `ZArcThreadMutex`), not the unresolved `0x03` codec. Do not spend another session re-identifying this chain. Keep commands compatible with **fish** unless explicitly invoking Bash.
