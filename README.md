@@ -181,3 +181,7 @@ This is an independent interoperability, archival research, and modding project.
 ## License
 
 **Choose a license before publishing.** MIT is a practical option for a small Python utility, but only add an MIT `LICENSE` file if you intend to license your own code under those terms. This README does not itself grant a license to third-party game data.
+
+## Research update — October 18, 2026
+
+All archive entries and catalog names are extractable, but named texture/model content is **not yet extractable**. Subsequent audits identified 891 numbered containers, 890 indexed sections, 10,379 nested and 3,551 direct framed `0x03` records (13,930 record instances, 3,933 distinct encoded payloads), and a strongly evidenced 16-bit identifier-to-nested-payload correspondence. These are **encoded** payloads; the inner codec and catalog-filename-to-container link are unsolved. For precise results, failed approaches, file paths and a sensible next experiment, see [`TAKEOVER_HANDOFF.md`](TAKEOVER_HANDOFF.md). Prior sections may reflect earlier checkpoints and should be read with that update in mind.

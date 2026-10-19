@@ -31,3 +31,7 @@ The custom 64-bit hash is `(crc_high << 32) | crc_low`. For each CRC, initialize
 - **Unsolved:** decoding the numbered-container `0x03` payload codec; see `NUMBERED_CONTAINERS.md`.
 - Neither `.tim` nor `.pmd` files have yet been demonstrated to be individually reconstructed from these containers.
 - Do not infer that the 50,237 catalog rows are 50,237 independently stored ZARC members (only 1,183 outer members exist).
+
+## Resource-ID validation update — October 18, 2026
+
+All **45,756** grouped catalog entries obey `resource_id = (resource_group << 24) | (type << 16) | group_index`, tested by SQLite bit operations with zero mismatches. For each of the eight groups, the *combined* type-1 `.tim` and type-2 `.pmd` entries have exactly one entry per group-index from 0 through N−1 (no duplicates or gaps); individual type sequences can be sparse within a group. Group counts/ranges are given in `TAKEOVER_HANDOFF.md`. This establishes a catalog-side logical ordinal; it does **not** identify where the asset data is stored. Do **not** assume the 16-bit catalog index is the same namespace as the `u16` identifier table discovered in numbered containers; this correspondence remains untested.

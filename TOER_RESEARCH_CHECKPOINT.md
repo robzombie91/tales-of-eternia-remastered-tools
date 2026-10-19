@@ -44,3 +44,7 @@ See `NUMBERED_CONTAINERS.md` for the 890 structurally valid containers, 10,379 v
 ## Next workflow
 
 Pause point as of 2026-10-18: the user is returning to playing the game. Future work should locate the consumer of the nine-byte `0x03` wrapper or capture one decoded sample at runtime; verify its decoded size against the wrapper and connect it to a catalog filename. **Do not restart broad prefix scans or continue the already-identified outer LZMA chain.** Do not commit proprietary extracted asset data or full catalog content without checking redistribution permissions.
+
+## Takeover update — October 18, 2026 (supersedes old pause point)
+
+The original checkpoint's **890** numbered containers refers to indexed layouts. Follow-on full scan found **891** numbered layouts, **890** indexed initial sections, **3,551** validated direct `0x03` sections, **7** unclassified sections. Nested record parsing validated **10,379** more `0x03` records, yielding 13,930 occurrences / 3,933 distinct SHA-256 payloads. 890 initial `u16` identifier tables crosswalk exactly to 10,379 nested records: 647 distinct identifiers, 654 ID/payload combinations; IDs 1–7 have 2 variants, the other 640 have 1. Full methods, caveats, exact user-workspace paths and next target appear in `TAKEOVER_HANDOFF.md`. **Nothing has yet been decoded into a verified original `.tim`/`.pmd` asset.** Avoid further unfocused count audits and the outer archive LZMA function chain.

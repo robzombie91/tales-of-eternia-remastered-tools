@@ -56,3 +56,7 @@ Explain complicated reverse-engineering steps in plain English. Prefer one focus
 ### Later Ghidra finding
 
 `FUN_1802740f0 → FUN_180274810 → FUN_180276840 → FUN_180274CC0` is the **outer ZARC LZMA-Alone** path (worker names `ZArcThreadMutex`), not the unresolved `0x03` codec. Do not spend another session re-identifying this chain. Keep commands compatible with **fish** unless explicitly invoking Bash.
+
+## Mandatory takeover context — October 18 follow-up
+
+Read `TAKEOVER_HANDOFF.md` before proposing more experiments. The validated inventory is 891 numbered containers, 890 indexed sections, 10,379 nested plus 3,551 direct `0x03` records, 3,933 distinct encoded payloads. The first entry in indexed sections is a `u16` identifier table; the position-by-position crosswalk yields 647 IDs and 654 ID/payload variants. **These identifiers are not proven equal to TOER catalog resource IDs.** The project's only relevant completion criterion now is **one correctly decoded named `.tim` or `.pmd` asset or exact proof of its decoding function**. Do not treat passing another audit as end-to-end extraction progress. Preserve existing notes as historical findings, but explicitly correct older counts and claims if new measurements supersede them.
